@@ -1,39 +1,65 @@
 <?php
+
 namespace App\Http\Controllers;
 
-// TAMBAHKAN DUA BARIS PENTING INI:
-use App\Http\Controllers\Controller; // Untuk kelas Controller dasar
-use App\Models\Mentor;               // Untuk model Mentor kita
-
-// Baris ini sudah ada sebelumnya:
+use App\Http\Controllers\Controller;
+use App\Models\Mentor;
 use Illuminate\Http\Request;
 
 class MentorController extends Controller
 {
-    // UBAH FUNGSI INDEX ANDA MENJADI SEPERTI INI
-    public function index(Request $request) // Tambahkan Request $request di sini
+    /**
+     * Menampilkan daftar semua mentor, dengan fitur pencarian.
+     */
+    public function index(Request $request)
     {
-        // Ambil kata kunci pencarian dari URL (?search=...)
         $search = $request->input('search');
+        $query = Mentor::query();
 
-        // Mulai query ke database, tapi jangan eksekusi dulu
-        $query = \App\Models\Mentor::query();
-
-        // Jika ada kata kunci pencarian yang diketik oleh pengguna
         if ($search) {
-            // Tambahkan kondisi WHERE ke dalam query
-            // Cari di kolom 'nama' ATAU di kolom 'bidang_keahlian'
-            // 'ILIKE' adalah versi 'LIKE' yang tidak case-sensitive (huruf besar/kecil tidak masalah)
             $query->where('nama', 'ILIKE', "%{$search}%")
                   ->orWhere('bidang_keahlian', 'ILIKE', "%{$search}%");
         }
 
-        // Sekarang, eksekusi query yang sudah difilter (atau belum jika tidak ada pencarian)
         $mentors = $query->get();
-
-        // Kirim data mentor yang sudah difilter ke view
         return view('mentors.index', ['mentors' => $mentors]);
     }
 
-    // ... (fungsi show() tetap sama)
+    /**
+     * Menampilkan form untuk membuat mentor baru.
+     */
+    public function create()
+    {
+        return view('mentors.create');
+    }
+
+    /**
+     * Menyimpan mentor baru ke database.
+     * INI ADALAH SATU-SATUNYA FUNGSI store YANG SEHARUSNYA ADA
+     */
+    public function store(Request $request)
+    {
+        // 1. Validasi data yang masuk dari form
+        $validatedData = $request->validate([
+            'nama' => 'required|string|max:255',
+            'email' => 'required|email|unique:mentors,email',
+            'bidang_keahlian' => 'nullable|string|max:255',
+            'tarif_per_jam' => 'nullable|integer',
+            'deskripsi' => 'nullable|string',
+        ]);
+
+        // 2. Jika validasi berhasil, buat record baru di database
+        Mentor::create($validatedData);
+
+        // 3. Redirect pengguna kembali ke halaman daftar mentor dengan pesan sukses
+        return redirect('/mentors')->with('success', 'Mentor baru berhasil ditambahkan!');
+    }
+
+    /**
+     * Menampilkan detail dari satu mentor.
+     */
+    public function show(Mentor $mentor)
+    {
+        return view('mentors.show', ['mentor' => $mentor]);
+    }
 }

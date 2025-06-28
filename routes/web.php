@@ -2,16 +2,19 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MentorController;
+use App\Http\Controllers\HomeController;
 
-/* ... komentar bawaan Laravel ... */
+// Rute untuk Homepage
+Route::get('/', [HomeController::class, 'index']);
 
-// Rute untuk Halaman Utama (Homepage)
-// Saat orang membuka http://pencarian-mentor.test/
-Route::get('/', function () {
-    return view('welcome'); // <-- Perintah ini akan menampilkan halaman "Selamat Datang"
-});
+// Rute untuk menampilkan form tambah mentor (GET)
+Route::get('/mentors/create', [MentorController::class, 'create']);
 
+// TAMBAHKAN ROUTE BARU INI UNTUK MEMPROSES SIMPAN DATA (POST)
+Route::post('/mentors', [MentorController::class, 'store']);
 
-// Rute untuk Halaman Daftar Mentor
-// Saat orang membuka http://pencarian-mentor.test/mentors
+// Rute untuk menampilkan semua mentor (GET)
 Route::get('/mentors', [MentorController::class, 'index']);
+
+// Rute untuk menampilkan detail satu mentor (GET)
+Route::get('/mentors/{mentor}', [MentorController::class, 'show']);
