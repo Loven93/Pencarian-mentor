@@ -1,15 +1,14 @@
-{{-- KODE UNTUK DAFTAR MENTOR - mentors/index.blade.php --}}
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Semua Mentor - Tutoring</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100">
-    @include('partials.navbar')
+{{-- File: resources/views/mentors/index.blade.php --}}
+
+<x-app-layout>
     <main class="container mx-auto px-4 py-12">
+
+        @if (session('success'))
+            <div class="max-w-7xl mx-auto mb-6 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md" role="alert">
+                <p class="font-bold">Sukses!</p>
+                <p>{{ session('success') }}</p>
+            </div>
+        @endif
 
         <div class="text-center mb-10">
             <h1 class="text-4xl font-bold text-gray-800 mb-4">Daftar Semua Mentor</h1>
@@ -44,14 +43,5 @@
                 </div>
             @endforelse
         </div>
-
     </main>
-
-    <footer class="bg-gray-800 text-white py-6 mt-16">
-        <div class="container mx-auto px-6 text-center">
-            <p>&copy; 2025 Tutoringit</p>
-        </div>
-    </footer>
-
-</body>
-</html>
+</x-app-layout>
